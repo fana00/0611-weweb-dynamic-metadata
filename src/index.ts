@@ -10,10 +10,6 @@ export default {
 
     // Parse the request URL
     const url = new URL(request.url);
-if (url.pathname.length > 1 && url.pathname.endsWith('/')) {
-  const canonical = url.origin + url.pathname.slice(0, -1) + url.search;
-  return Response.redirect(canonical, 301);
-}  
     const referer = request.headers.get('Referer')
 
     // Function to get the pattern configuration that matches the URL
