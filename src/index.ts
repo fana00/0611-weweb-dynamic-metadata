@@ -43,9 +43,26 @@ export default {
       const metaDataEndpointWithId = metaDataEndpoint.replace(placeholderPattern, id);
     
       // Fetch metadata from the API endpoint
-      const metaDataResponse = await fetch(metaDataEndpointWithId);
-      const metadata = await metaDataResponse.json();
-      return metadata;
+      // Fetch metadata from the API endpoint
+try {
+  const metaDataResponse = await fetch(metaDataEndpointWithId, {
+    method: 'GET',                                // GET unless your function needs POST
+    headers: {
+      'Authorization': `Bearer ${env.SUPABASE_KEY}`
+    }
+  });
+
+  if (!metaDataResponse.ok) {
+    const body = await metaDataResponse.text();
+    console.error('Meta fetch failed', metaDataResponse.status, body);
+    throw new Error(`Metadata ${metaDataResponse.status}`);
+  }
+
+  return await metaDataResponse.json();          // ← returns to requestMetadata() caller
+} catch (err) {
+  console.error('requestMetadata error', err);
+  throw err;                                     // propagates to calling code
+}
     }
 
     // Handle dynamic page requests
